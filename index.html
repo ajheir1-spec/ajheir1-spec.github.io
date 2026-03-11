@@ -429,25 +429,95 @@
   .reveal { opacity:0; transform:translateY(28px); transition:opacity 0.65s ease, transform 0.65s ease; }
   .reveal.visible { opacity:1; transform:translateY(0); }
 
+  /* HAMBURGER */
+  .nav-hamburger {
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    gap: 5px;
+    background: none;
+    border: none;
+    padding: 4px;
+    cursor: pointer;
+    z-index: 200;
+  }
+  .nav-hamburger span {
+    display: block;
+    width: 24px;
+    height: 2px;
+    background: var(--heading);
+    border-radius: 2px;
+    transition: all 0.25s;
+  }
+  .nav-hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+  .nav-hamburger.open span:nth-child(2) { opacity: 0; }
+  .nav-hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
   /* MOBILE */
   @media(max-width:900px){
-    nav{padding:0 24px}
-    .nav-links{display:none}
-    section{padding:72px 24px}
-    .hero{padding:100px 24px 80px}
-    .hero-stats{display:none}
-    .about-section{grid-template-columns:1fr;gap:48px;padding:72px 24px}
-    .services-header{flex-direction:column;align-items:flex-start}
-    .service-row{grid-template-columns:1fr;gap:16px;padding:32px 24px}
-    .service-row-tags{flex-direction:row;flex-wrap:wrap;align-items:flex-start}
-    .process-grid{grid-template-columns:1fr 1fr}
-    .process-step:first-child{border-radius:14px 0 0 0}
-    .process-step:last-child{border-radius:0 0 14px 0}
-    .cta-inner{flex-direction:column}
-    .cta-banner{padding:64px 24px}
-    .testimonials-grid{grid-template-columns:1fr}
-    .footer-top{grid-template-columns:1fr 1fr;gap:36px}
-    .testimonials{padding:72px 24px}
+    nav { padding: 0 24px; }
+    .nav-hamburger { display: flex; }
+    .nav-links {
+      display: none;
+      position: fixed;
+      top: 70px; left: 0; right: 0;
+      background: rgba(240,240,238,0.98);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      flex-direction: column;
+      align-items: center;
+      gap: 0;
+      padding: 16px 0 24px;
+      border-bottom: 1px solid var(--border);
+      z-index: 99;
+      list-style: none;
+    }
+    .nav-links.open { display: flex; }
+    .nav-links li { width: 100%; text-align: center; }
+    .nav-links a { display: block; padding: 14px 24px; font-size: 15px; }
+    .nav-links .nav-cta { margin: 8px 24px 0; display: block; border-radius: 8px; }
+
+    section { padding: 64px 20px; }
+    .hero { padding: 110px 20px 72px; min-height: auto; }
+    .hero-stats { display: none; }
+    .hero-title { font-size: clamp(44px, 12vw, 72px); }
+    .hero-desc { font-size: 16px; }
+    .hero-actions { flex-direction: column; align-items: flex-start; gap: 14px; }
+
+    .about-section { grid-template-columns: 1fr; gap: 40px; padding: 64px 20px; }
+    .about-photo-wrap::before { display: none; }
+    .about-badge { bottom: -12px; right: -8px; padding: 14px 16px; }
+
+    .services-header { flex-direction: column; align-items: flex-start; gap: 16px; margin-bottom: 32px; }
+    .service-row { grid-template-columns: 1fr; gap: 12px; padding: 28px 20px; }
+    .service-row-tags { flex-direction: row; flex-wrap: wrap; align-items: flex-start; }
+
+    .process-grid { grid-template-columns: 1fr 1fr; gap: 2px; margin-top: 40px; }
+    .process-step:first-child { border-radius: 14px 0 0 0; }
+    .process-step:last-child  { border-radius: 0 0 14px 0; }
+    .process-step { padding: 28px 20px; }
+
+    .cta-inner { flex-direction: column; gap: 28px; }
+    .cta-banner { padding: 56px 20px; }
+
+    .testimonials { padding: 64px 20px; }
+    .testimonials-grid { grid-template-columns: 1fr; }
+
+    #booking { padding: 64px 20px !important; }
+    #booking > div:last-child { border-radius: 14px; }
+    .calendly-inline-widget { height: 600px !important; }
+
+    .footer-top { grid-template-columns: 1fr 1fr; gap: 32px; padding: 20px; }
+    .footer-brand { grid-column: 1 / -1; }
+    footer { padding: 48px 20px 28px; }
+  }
+
+  @media(max-width:480px){
+    .process-grid { grid-template-columns: 1fr; }
+    .process-step:first-child { border-radius: 14px 14px 0 0; }
+    .process-step:last-child  { border-radius: 0 0 14px 14px; }
+    .footer-top { grid-template-columns: 1fr; }
+    .hero-title { font-size: clamp(38px, 11vw, 56px); }
   }
 </style>
 </head>
@@ -461,12 +531,15 @@
     <div class="logo-mark">AJ</div>
     ADAM <span>JHEIR</span>
   </a>
-  <ul class="nav-links">
+  <ul class="nav-links" id="navLinks">
     <li><a href="#about">About</a></li>
     <li><a href="#services">Services</a></li>
     <li><a href="#process">Process</a></li>
     <li><a href="#booking" class="nav-cta">Book Assessment</a></li>
   </ul>
+  <button class="nav-hamburger" id="navHamburger" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
 </nav>
 
 <!-- HERO -->
@@ -493,12 +566,8 @@
       <div class="stat-label">Years Experience</div>
     </div>
     <div class="stat-item">
-      <div class="stat-num">100<sup>+</sup></div>
+      <div class="stat-num">650<sup>+</sup></div>
       <div class="stat-label">Clients Trained</div>
-    </div>
-    <div class="stat-item">
-      <div class="stat-num">4<sup>yr</sup></div>
-      <div class="stat-label">Clinical Degree</div>
     </div>
   </div>
   <div class="hero-scroll">
@@ -543,8 +612,8 @@
   </div>
   <div class="about-text reveal">
     <div class="section-tag">About Me</div>
-    <h2 class="section-title">Clinician.<br>Coach. <span style="color:var(--green)">Obsessive.</span></h2>
-    <p>I'm a Clinical Exercise Physiologist (Hons) based in Brisbane — working at the intersection of performance coaching and clinical rehabilitation.</p>
+    <h2 class="section-title">Clinician.<br><span style="color:var(--green)">Coach.</span></h2>
+    <p>I'm a Clinical Exercise Physiologist (Hons) working at the intersection of performance coaching and clinical rehabilitation.</p>
     <p>With 5 years of personal training experience and a degree in Clinical Exercise Physiology, I build evidence-based programs that take you from pain and injury through to your best athletic performance.</p>
     <div class="about-pills">
       <div class="pill">Clinical Exercise Physiology</div>
@@ -791,6 +860,21 @@
 </footer>
 
 <script>
+  // Hamburger menu
+  const hamburger = document.getElementById('navHamburger');
+  const navLinks = document.getElementById('navLinks');
+  hamburger.addEventListener('click', () => {
+    hamburger.classList.toggle('open');
+    navLinks.classList.toggle('open');
+  });
+  // Close menu when a link is clicked
+  navLinks.querySelectorAll('a').forEach(a => {
+    a.addEventListener('click', () => {
+      hamburger.classList.remove('open');
+      navLinks.classList.remove('open');
+    });
+  });
+
   // Bulletproof smooth scroll — works on local files too
   document.querySelectorAll('a[href^="#"]').forEach(a => {
     a.addEventListener('click', function(e) {
